@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <locale.h>
 
 int Open_fail(FILE *fp,char nm,int i,char strok,int sz,char vid) {
 	char sim;

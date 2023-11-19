@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <stdlib.h>
 #include <locale.h>
 #include "Class.c"
 
@@ -22,7 +23,7 @@ int menui_pod2() {
 
 }
 
-int main() {
+int main(void ) {
 	setlocale(LC_ALL, "ru");
 
   
