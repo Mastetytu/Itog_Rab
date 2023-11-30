@@ -129,7 +129,6 @@
   <ItemGroup>
     <ClCompile Include="Class.c" />
     <ClCompile Include="Itog_rb.c" />
-    <ClCompile Include="Potoc.c" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

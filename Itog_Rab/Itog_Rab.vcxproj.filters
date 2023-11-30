@@ -18,9 +18,6 @@
     <ClCompile Include="Class.c">
       <Filter>Файлы ресурсов</Filter>
     </ClCompile>
-    <ClCompile Include="Potoc.c">
-      <Filter>Файлы ресурсов</Filter>
-    </ClCompile>
     <ClCompile Include="Itog_rb.c">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
