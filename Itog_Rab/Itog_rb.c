@@ -5,284 +5,169 @@
 #include <omp.h>
 #include <time.h>
 #include <malloc.h>
+
 #define MAX_FILENAME_LENGTH 100
 #define MAX_VALUE 100
 
 
-
-
 int menu(int* point)
 {
-    int _turn;
-    int turn;
-    printf("МЕНЮ:\n");
-    printf("  1. Считать стостояние потока задач:\n");
-    printf("     Подменю:\n");
-    printf("       1. Сгенерировать рандомно (количество потоков задает пользователь)\n");
-    printf("       2. Прочитать из файла\n");
-    printf("       3. Назад\n");
-    printf("  2. Провести эксперемент по эффективности:\n");
-    printf("     Подменю:\n");
-    printf("       1. Всех сортировок\n");
-    printf("       2. Выбранной сортировки\n");
-    printf("       3. Назад\n");
-    printf("  3. Смоделировать процесс работы потоков\n");
-    printf("  4. Выход\n");
-    printf("Ваш выбор:");
-    scanf_s("%d", &turn);
-    while (turn < 1 || turn > 4)
-    {
-        printf("Некорректный ввод, попробуйте еще раз:");
-        scanf_s("%d", &turn);
-    }
-    point[0] = turn;
-    if (turn == 1 || turn == 2)
-    {
-        scanf_s("%d", &_turn);
-        while (turn < 1 || turn > 3)
-        {
-            printf("Некорректный ввод, попробуйте еще раз:");
-            scanf_s("%d", &_turn);
-        }
-        point[1] = _turn;
-    }
-    return turn;
+	int _turn;
+	int turn;
+	printf("МЕНЮ:\n");
+	printf("  1. Считать стостояние потока задач:\n");
+	printf("     Подменю:\n");
+	printf("       1. Сгенерировать рандомно (количество потоков задает пользователь)\n");
+	printf("       2. Прочитать из файла\n");
+	printf("       3. Назад\n");
+	printf("  2. Провести эксперемент по эффективности:\n");
+	printf("     Подменю:\n");
+	printf("       1. Всех сортировок\n");
+	printf("       2. Выбранной сортировки\n");
+	printf("       3. Назад\n");
+	printf("  3. Смоделировать процесс работы потоков\n");
+	printf("  4. Выход\n");
+	printf("Ваш выбор:");
+	scanf_s("%d", &turn);
+	while (turn < 1 || turn > 4)
+	{
+		printf("Некорректный ввод, попробуйте еще раз:");
+		scanf_s("%d", &turn);
+	}
+	point[0] = turn;
+	if (turn == 1 || turn == 2)
+	{
+		scanf_s("%d", &_turn);
+		while (turn < 1 || turn > 3)
+		{
+			printf("Некорректный ввод, попробуйте еще раз:");
+			scanf_s("%d", &_turn);
+		}
+		point[1] = _turn;
+	}
+	return turn;
 }
 
 
 int start_menu()
 {
-    int turn;
+	int turn;
 
-    printf("Перед началом работы задайте время CPU\n");
-    printf("     Подменю:\n");
-    printf("       1. Сгенерировать рандомно\n");
-    printf("       2. Прочитать из файла\n");
-    printf("Ваш выбор: ");
-    scanf_s("%d", &turn);
-    while (turn < 1 || turn > 2)
-    {
-        printf("Некорректный ввод, попробуйте еще раз:");
-        scanf_s("%d", &turn);
-    }
-    return turn;
+	printf("Перед началом работы задайте время CPU\n");
+	printf("     Подменю:\n");
+	printf("       1. Сгенерировать рандомно\n");
+	printf("       2. Прочитать из файла\n");
+	printf("Ваш выбор: ");
+	scanf_s("%d", &turn);
+	while (turn < 1 || turn > 2)
+	{
+		printf("Некорректный ввод, попробуйте еще раз:");
+		scanf_s("%d", &turn);
+	}
+	return turn;
 }
 
 int fird_punct()
 {
-    int turn;
-    system("cls");
-    printf("1. Сортировка пузырьком.\n2. Сортировка подсчетом.\n3. Сортировка слиянием.\n4. Сортировка Шелла.\n Выберите сортировку: ");
-    scanf_s("%d", &turn);
-    while (turn < 1 || turn > 4)
-    {
-        printf("Некорректный ввод, попробуйте еще раз:");
-        scanf_s("%d", &turn);
-    }
-    return turn;
+	int turn;
+	system("cls");
+	printf("1. Сортировка пузырьком.\n2. Сортировка подсчетом.\n3. Сортировка слиянием.\n4. Сортировка Шелла.\n Выберите сортировку: ");
+	scanf_s("%d", &turn);
+	while (turn < 1 || turn > 4)
+	{
+		printf("Некорректный ввод, попробуйте еще раз:");
+		scanf_s("%d", &turn);
+	}
+	return turn;
 }
-
-
-double bubbleSort(int arr[], int size, int* params)
+void quickSort(int* numbers, int left, int right)
 {
-    double startTime;
-    double finishTime;
-    double resTime;
-    int swaps = 0;
-    int cmps = 0;
-    startTime = omp_get_wtime();
-    for (int i = 0; i < size - 1; i++) {
-        for (int j = 0; j < size - i - 1; j++) {
-            if (arr[j] > arr[j + 1]) {
-                cmps += 1;
-                int temp = arr[j];
-                arr[j] = arr[j + 1];
-                arr[j + 1] = temp;
-                swaps += 1;
-            }
-        }
-    }
-    params[0] = swaps;
-    params[1] = cmps;
-    finishTime = omp_get_wtime();
-    resTime = finishTime - startTime;
-    return resTime;
+	int pivot;
+	int l_hold = left;
+	int r_hold = right;
+	pivot = numbers[left];
+	while (left < right)
+	{
+		while ((numbers[right] >= pivot) && (left < right))
+			right--;
+		if (left != right)
+		{
+			numbers[left] = numbers[right];
+			left++;
+		}
+		while ((numbers[left] <= pivot) && (left < right))
+			left++;
+		if (left != right)
+		{
+			numbers[right] = numbers[left];
+			right--;
+		}
+	}
+	numbers[left] = pivot;
+	pivot = left;
+	left = l_hold;
+	right = r_hold;
+	if (left < pivot)
+		quickSort(numbers, left, pivot - 1);
+	if (right > pivot)
+		quickSort(numbers, pivot + 1, right);
 }
-
-double countingSort(int arr[], int size, int* params) {
-
-    double startTime;
-    double finishTime;
-    double resTime;
-    int swaps = 0;
-    int cmps = 0;
-    int* sorted_arr;
-
-    startTime = omp_get_wtime();
-
-    sorted_arr = (int*)malloc(size * sizeof(int));
-    int k = 0;
-    for (int i = 0; i < size; i++)
-    {
-        k = 0;
-        for (int j = 0; j < size; j++)
-        {
-            if (arr[i] > arr[j])
-                k++;
-        }
-        sorted_arr[k] = arr[i];
-        swaps++;
-    }
-
-    for (int c = 0; c < size; c++)
-    {
-        arr[c] = sorted_arr[c];
-    }
-    params[0] = swaps;
-    params[1] = k;
-    finishTime = omp_get_wtime();
-    resTime = finishTime - startTime;
-    return resTime;
-}
-
-void merge(int arr[], int left, int mid, int right, int params[]) {
-    int i, j, k;
-    int n1 = mid - left + 1;
-    int n2 = right - mid;
-
-    int* L;
-    int* R;
-
-    L = (int*)malloc(n1 * sizeof(int));
-    R = (int*)malloc(n2 * sizeof(int));
-    for (i = 0; i < n1; i++)
-    {
-        L[i] = arr[left + i];
-        params[0] += 1;
-    }
-    for (j = 0; j < n2; j++)
-    {
-        R[j] = arr[mid + 1 + j];
-        params[0] += 1;
-    }
-
-    i = 0;
-    j = 0;
-    k = left;
-
-    while (i < n1 && j < n2) {
-        params[1] += 1;
-        if (L[i] <= R[j]) {
-            arr[k] = L[i];
-            i++;
-            params[0] += 1;
-        }
-        else {
-            arr[k] = R[j];
-            j++;
-            params[0] += 1;
-        }
-        k++;
-    }
-
-    while (i < n1) {
-        params[1] += 1;
-        arr[k] = L[i];
-        i++;
-        k++;
-        params[0] += 1;
-    }
-
-    while (j < n2) {
-        params[1] += 1;
-        arr[k] = R[j];
-        j++;
-        k++;
-        params[0] += 1;
-    }
-}
-
-int mergeSort(int arr[], int left, int right, int params[]) {
-    if (left < right) {
-        params[1] += 1;
-        int mid = left + (right - left) / 2;
-
-        mergeSort(arr, left, mid, params);
-        mergeSort(arr, mid + 1, right, params);
-
-        merge(arr, left, mid, right, params);
-    }
-    return 0;
-}
-
-double shellSort(int arr[], int n, int params[]) {
-    double startTime;
-    double finishTime;
-    double resTime;
-    int swaps = 0;
-    int cmps = 0;
-    startTime = omp_get_wtime();
-
-    for (int gap = n / 2; gap > 0; gap /= 2) {
-        for (int i = gap; i < n; i++) {
-            cmps += 1;
-            int temp = arr[i];
-            int j;
-            for (j = i; j >= gap && arr[j - gap] > temp; j -= gap) {
-                arr[j] = arr[j - gap];
-                swaps += 1;
-            }
-            arr[j] = temp;
-        }
-    }
-    params[0] = swaps;
-    params[1] = cmps;
-    finishTime = omp_get_wtime();
-    resTime = finishTime - startTime;
-    return resTime;
-}
-
-#include <stdio.h>
-
-int checkSort(int arr[], int size) {
-    int i;
-    for (i = 1; i < size; i++) {
-        if (arr[i] < arr[i - 1]) {
-            return i; // Возвращаем номер итерации с ошибкой
-        }
-    }
-    return -1; // Все элементы отсортированы верно
-}
-
-int binarySearch(int* mass, int size, int target)
+void shellSort(int* num, int size)
 {
-    int low, high, middle;
-    low = 0;
-    high = size - 1;
-    while (low <= high)
-    {
-        middle = (low + high) / 2;
-        if (target < mass[middle])
-            high = middle - 1;
-        else if (target > mass[middle])
-            low = middle + 1;
-        else
-        {
-            if (mass[middle] == 0)
-            {
-                return -1;
-            }
-            else
-            {
-                return middle;
-            }
-        }
-    }
-    if (target <= 0)
-    {
-        return -1;
-    }
-    return binarySearch(mass, size, target - 1);
+	int increment = 3;
+	while (increment > 0)
+	{
+		for (int i = 0; i < size; i++)
+		{
+			int j = i;
+			int temp = num[i];
+
+
+			while ((j >= increment) && (num[j - increment] > temp))
+			{
+				num[j] = num[j - increment];
+				j = j - increment;
+			}
+			num[j] = temp;
+		}
+		if (increment > 1)
+			increment = increment / 2;
+		else if (increment == 1)
+			break;
+	}
+}
+void shekerSort(double* mass, int count)
+{
+	int left = 0, right = count - 1;
+	int flag = 1;
+
+
+	while ((left < right) && flag > 0)
+	{
+		flag = 0;
+		for (int i = left; i < right; i++)
+		{
+			if (mass[i] > mass[i + 1])
+			{
+				double t = mass[i];
+				mass[i] = mass[i + 1];
+				mass[i + 1] = t;
+				flag = 1;
+			}
+		}
+		right--;
+		for (int i = right; i > left; i--)
+		{
+			if (mass[i - 1] > mass[i])
+			{
+				double t = mass[i];
+				mass[i] = mass[i - 1];
+				mass[i - 1] = t;
+				flag = 1;
+			}
+		}
+		left++;
+	}
 }
 int main()
 {
@@ -300,6 +185,9 @@ int main()
 	double _running;
 	int count;
 	int CPU_count;
+	int CPU_summ = 0;
+	int summ = 0;
+	int ost_time;
 	int point[2] = { 0, 0 };
 	int param_buble[2] = { 0, 0 };
 	int param_counting[2] = { 0, 0 };
@@ -321,15 +209,14 @@ int main()
 		break;
 	case 2:
 		printf("Введите количество чисел: ");
-		scanf_s("%d", &count); // задается количество потоков CPU
+		scanf_s("%d", &CPU_count); // задается количество потоков CPU
 
-		mass = (int*)malloc(count * sizeof(int)); // На основе количества создается динамический массив.
+		mass_CPU = (int*)malloc(CPU_count * sizeof(int)); // На основе количества создается динамический массив.
 
 		printf("Введите данные в ports.txt (\\Itog_Rab\\Itog_Rab), после чего перезапустите программу\n");
 		system("pause");
 
 		
-
 		char adr[100] = "\\Itog_Rab\\Itog_Rab"; // Путь к файлу из которго будут взяты данные 
 		char CPU_file[100] = "Max.txt"; // Название файла из которго будут взяты данные 
 		char CPU_way[200];
@@ -348,8 +235,8 @@ int main()
 			break;
 		}
 
-		for (int i = 0; i < count; i++) {
-			fscanf_s(input_file_CPU, "%d", &mass[i]); // Записываем данные из файла в массив
+		for (int i = 0; i < CPU_count; i++) {
+			fscanf_s(input_file_CPU, "%d", &mass_CPU[i]); // Записываем данные из файла в массив
 		}
 
 		fclose(input_file_CPU); // закрываем файл
@@ -358,6 +245,10 @@ int main()
 		break;
 	default:
 		break;
+	}
+	for (int i = 0; i < CPU_count; i++)
+	{
+		CPU_summ += mass_CPU[i];
 	}
 	while (1)
 	{
@@ -375,6 +266,10 @@ int main()
 				for (int i = 0; i < count; i++)
 				{
 					mass[i] = 1 + rand() % 255; // массив заполняется случайными значениями
+				}
+				for (int i = 0; i < CPU_count; i++)
+				{
+					summ += mass[i];
 				}
 				system("cls");
 				printf("Массив успешно создан!\nНажмите любую клавишу что бы продолжить.");
@@ -414,6 +309,10 @@ int main()
 				}
 
 				fclose(input_file_Flow); // Закрываем файл
+				for (int i = 0; i < CPU_count; i++)
+				{
+					summ += mass[i];
+				}
 				printf("Массив успешно создан!\nНажмите любую клавишу что бы продолжить.");
 				system("pause");
 				break;
@@ -469,26 +368,35 @@ int main()
 				runningMerge = checkSort(merge_mass, count);
 				_runningShell = shellSort(shell_mass, count, param_shell);
 				runningShell = checkSort(shell_mass, count);
+				printf("|______________________________________________|\n");
+				printf("|Сортировка|   Время   |  Кол-во    |  Кол-во  |\n");//10|10|12|10
+				printf("|          |   работы  |перестановок|сравнений |\n");
 				if (runningBuble == -1) { // Выводы если сортировки отработали корректно и некорректно
-					printf("Результат сортировки buble (критерии эффективности): перестановок = %d, сравнений = %d, время работы метода = %15.10lf мс\n", param_buble[0], param_buble[1], _runningBuble);
+					printf("|______________________________________________|\n");
+					printf("|   buble  |%-2.9f|%4s%-8d|%2s%-8d|\n", _runningBuble, "", param_buble[0], "", param_buble[1]);
 				}
 				else {
 					printf("Ошибка на итерации: %d\n", running);
 				}
 				if (runningCounting == -1) {
-					printf("Результат сортировки Подсчетом (критерии эффективности): перестановок = %d, сравнений = %d, время работы метода = %15.10lf мс\n", param_counting[0], param_counting[1], _runningCounting);
+					printf("|______________________________________________|\n");
+					printf("|Подсчетом |%-2.9f|%4s%-8d|%2s%-8d|\n", _runningCounting, "", param_counting[0], "", param_counting[1]);
 				}
 				else {
 					printf("Ошибка на итерации: %d\n", running);
 				}
 				if (runningMerge == -1) {
-					printf("Результат сортировки Слиянием (критерии эффективности): перестановок = %d, сравнений = %d, время работы метода = %15.10lf мс\n", param_merge[0], param_merge[1], _runningMerge);
+					printf("|______________________________________________|\n");
+					printf("| Слиянием |%-2.9f|%4s%-8d|%2s%-8d|\n", _runningMerge, "", param_merge[0], "", param_merge[1]);
+
 				}
 				else {
 					printf("Ошибка на итерации: %d\n", running);
 				}
 				if (runningShell == -1) {
-					printf("Результат сортировки Шелла (критерии эффективности): перестановок =%d, сравнений = %d, время работы метода = %15.10lf мс\n", param_shell[0], param_shell[1], _runningShell);
+					printf("|______________________________________________|\n");
+					printf("|   Шелла  |%-2.9f|%4s%-8d|%2s%-8d|\n", _runningShell, "", param_shell[0], "", param_shell[1]);
+					printf("|______________________________________________|\n");
 				}
 				else {
 					printf("Ошибка на итерации: %d\n", running);
@@ -615,6 +523,15 @@ int main()
 						}
 					}
 					printf("|_________________________________________________________________|\n");
+					ost_time = CPU_summ - summ;
+					if (ost_time < 0)
+					{
+						printf("Для выполнения всех потоков не хватило: %d секунд\n", ost_time);
+					}
+					else if (ost_time > 0)
+					{
+						printf("Излишнее время: %d\n", ost_time);
+					}
 					system("pause");
 				}
 				else
@@ -670,6 +587,15 @@ int main()
 						}
 					}
 					fprintf(file, "|_________________________________________________________________|\n");
+					ost_time = CPU_summ - summ;
+					if (ost_time < 0)
+					{
+						fprintf(file, "Для выполнения всех потоков не хватило: %d секунд\n", ost_time);
+					}
+					else if (ost_time > 0)
+					{
+						fprintf(file, "Излишнее время: %d\n", ost_time);
+					}
 					printf("Файл успешно создан!\nНажмите любую клавишу что бы продолжить.");
 					fclose(file);
 					system("pause");
@@ -725,6 +651,15 @@ int main()
 						}
 					}
 					printf("|_________________________________________________________________|\n");
+					ost_time = CPU_summ - summ;
+					if (ost_time < 0)
+					{
+						printf("Для выполнения всех потоков не хватило: %d секунд\n", ost_time);
+					}
+					else if (ost_time > 0)
+					{
+						printf("Излишнее время: %d\n", ost_time);
+					}
 					system("pause");
 				}
 				else
@@ -782,6 +717,15 @@ int main()
 						}
 					}
 					fprintf(file, "|_________________________________________________________________|\n");
+					ost_time = CPU_summ - summ;
+					if (ost_time < 0)
+					{
+						fprintf(file, "Для выполнения всех потоков не хватило: %d секунд\n", ost_time);
+					}
+					else if (ost_time > 0)
+					{
+						fprintf(file, "Излишнее время: %d\n", ost_time);
+					}
 					printf("Файл успешно создан!\nНажмите любую клавишу что бы продолжить.");
 					fclose(file);
 					system("pause");
@@ -835,7 +779,15 @@ int main()
 							printf("|%2s%-8d|%2s%-8d|%2s%-8d|%2s%-8d|%2s%-8d|%2s%-8d|\n", "", i, "", mass_CPU[i], "", _dynamictime, "", running + 1, "", _num, "", dynamictime);
 						}
 					}
-					printf("|_________________________________________________________________|\n");
+					printf("|_________________________________________________________________|\n"); ost_time = CPU_summ - summ;
+					if (ost_time < 0)
+					{
+						printf("Для выполнения всех потоков не хватило: %d секунд\n", ost_time);
+					}
+					else if (ost_time > 0)
+					{
+						printf("Излишнее время: %d\n", ost_time);
+					}
 					system("pause");
 				}
 				else
@@ -897,6 +849,15 @@ int main()
 						}
 					}
 					fprintf(file, "|_________________________________________________________________|\n");
+					ost_time = CPU_summ - summ;
+					if (ost_time < 0)
+					{
+						fprintf(file, "Для выполнения всех потоков не хватило: %d секунд\n", ost_time);
+					}
+					else if (ost_time > 0)
+					{
+						fprintf(file, "Излишнее время: %d\n", ost_time);
+					}
 					printf("Файл успешно создан!\nНажмите любую клавишу что бы продолжить.");
 					fclose(file);
 					system("pause");
@@ -950,6 +911,15 @@ int main()
 						}
 					}
 					printf("|_________________________________________________________________|\n");
+					ost_time = CPU_summ - summ;
+					if (ost_time < 0)
+					{
+						printf("Для выполнения всех потоков не хватило: %d секунд\n", ost_time);
+					}
+					else if (ost_time > 0)
+					{
+						printf("Излишнее время: %d\n", ost_time);
+					}
 					system("pause");
 				}
 				else
@@ -1011,6 +981,15 @@ int main()
 						}
 					}
 					fprintf(file, "|_________________________________________________________________|\n");
+					ost_time = CPU_summ - summ;
+					if (ost_time < 0)
+					{
+						fprintf(file, "Для выполнения всех потоков не хватило: %d секунд\n", ost_time);
+					}
+					else if (ost_time > 0)
+					{
+						fprintf(file, "Излишнее время: %d\n", ost_time);
+					}
 					printf("Файл успешно создан!\nНажмите любую клавишу что бы продолжить.");
 					fclose(file);
 					system("pause");
