@@ -327,22 +327,15 @@ int fird_punct()
 
 int main()
 {
-	// Инициализация всех переменных с которыми будем работать
 	setlocale(LC_ALL, "Russian");
 	srand(time(NULL));
-	int* mass_CPU = 0;
+	int* mass_cpu = 0;
 	int* mass = 0;
 	int* mass_for_fird;
 	int* shekerSort_mass;
 	int* quickSort_mass;
 	int* shell_mass;
-	int running;
-	int _running;
-	int count;
-	int CPU_count;
-	int CPU_summ = 0;
-	int summ = 0;
-	int ost_time=0;
+	int running, _running,count,cpu_size,cpu_summ = 0,summ = 0, ost_time=0;
 	int point[2] = { 0, 0 };
 	int param_quickSort[2] = { 0, 0 };
 	int param_shekerSort[2] = { 0, 0 };
@@ -355,55 +348,49 @@ int main()
 	{
 	case 1:
 		printf_s("Введите количество потоков : ");
-		scanf_s("%d", &CPU_count); // задается количество потоков CPU
-		mass_CPU = (int*)malloc(CPU_count * sizeof(int));
-		for (int i = 0; i < CPU_count; i++)
+		scanf_s("%d", &cpu_size); 
+		mass_cpu = (int*)malloc(cpu_size * sizeof(int));
+		for (int i = 0; i < cpu_size; i++)
 		{
-			mass_CPU[i] = 1 + rand() % 1001; // массив заполняется рандомными значениями.
+			mass_cpu[i] = 1 + rand() % 1001; 
 		}
 		break;
 	case 2:
 		printf_s("Введите количество чисел: ");
-		scanf_s("%d", &CPU_count);
-
-		mass_CPU = (int*)malloc(CPU_count * sizeof(int));
-
+		scanf_s("%d", &cpu_size);
+		mass_cpu = (int*)malloc(cpu_size * sizeof(int));
 		printf_s("Введите данные в Max.txt (\\Itog_Rab\\Itog_Rab), после чего перезапустите программу\n");
 		system("pause");
-
-
 		char adr[100] = "\\Itog_Rab\\Itog_Rab";
-		char CPU_file[100] = "Max.txt";
-		char CPU_way[200];
-
-		FILE* input_file_CPU = NULL;
+		char cpu_file[100] = "Max.txt";
+		char cpu_w[200];
+		FILE* input_file_cpu = NULL;
 		errno_t error1;
 		errno_t error2;
+		strcpy_s(cpu_w, sizeof cpu_w, adr);
+		strncat_s(cpu_w, 100, cpu_file, 100);
+		error1 = fopen_s(&input_file_cpu, cpu_w, "r+");
 
-		strcpy_s(CPU_way, sizeof CPU_way, adr);
-		strncat_s(CPU_way, 100, CPU_file, 100);
-		error1 = fopen_s(&input_file_CPU, CPU_way, "r+");
-
-		if (input_file_CPU == 0)
+		if (input_file_cpu == 0)
 		{
 			printf_s("Не удалось открыть файл.");
 			break;
 		}
 
-		for (int i = 0; i < CPU_count; i++) {
-			fscanf_s(input_file_CPU, "%d", &mass_CPU[i]);
+		for (int i = 0; i < cpu_size; i++) {
+			fscanf_s(input_file_cpu, "%d", &mass_cpu[i]);
 		}
 
-		fclose(input_file_CPU);
+		fclose(input_file_cpu);
 		printf_s("Массив успешно создан!\nНажмите любую клавишу что бы продолжить.");
 		system("pause");
 		break;
 	default:
 		break;
 	}
-	for (int i = 0; i < CPU_count; i++)
+	for (int i = 0; i < cpu_size; i++)
 	{
-		CPU_summ += mass_CPU[i];
+		cpu_summ += mass_cpu[i];
 	}
 	while (1)
 	{
@@ -422,7 +409,7 @@ int main()
 				{
 					mass[i] = 1 + rand() % 255;
 				}
-				for (int i = 0; i < CPU_count; i++)
+				for (int i = 0; i < cpu_size; i++)
 				{
 					summ += mass[i];
 				}
@@ -433,38 +420,32 @@ int main()
 			case 2:
 				printf("Введите количество чисел: ");
 				scanf_s("%d", &count);
-
 				mass = (int*)malloc(count * sizeof(int));
-
 				printf("Введите данные в ports.txt (\\Itog_Rab\\Itog_Rab), после чего перезапустите программу\n");
 				system("pause");
-
-
-
 				char adr[100] = "\\Itog_Rab\\Itog_Rab";
-				char Flow_file[100] = "ports.txt";
-				char Flow_way[200];
-
-				FILE* input_file_Flow = NULL;
+				char flow_file[100] = "ports.txt";
+				char flow_w[200];
+				FILE* input_file_flow = NULL;
 				errno_t error1;
 				errno_t error2;
 
-				strcpy_s(Flow_way, sizeof Flow_way, adr);
-				strncat_s(Flow_way, 100, Flow_file, 100);
-				error1 = fopen_s(&input_file_Flow, Flow_way, "r+");
+				strcpy_s(flow_w, sizeof flow_w, adr);
+				strncat_s(flow_w, 100, flow_file, 100);
+				error1 = fopen_s(&input_file_flow, flow_w, "r+");
 
-				if (input_file_Flow == 0)
+				if (input_file_flow == 0)
 				{
 					printf("Не удалось открыть файл.");
 					break;
 				}
 
 				for (int i = 0; i < count; i++) {
-					fscanf_s(input_file_Flow, "%d", &mass[i]);
+					fscanf_s(input_file_flow, "%d", &mass[i]);
 				}
 
-				fclose(input_file_Flow);
-				for (int i = 0; i < CPU_count; i++)
+				fclose(input_file_flow);
+				for (int i = 0; i < cpu_size; i++)
 				{
 					summ += mass[i];
 				}
@@ -487,16 +468,16 @@ int main()
 					system("pause");
 					break;
 				}
-				else if (mass_CPU == 0)
+				else if (mass_cpu == 0)
 				{
 					printf("Невозможно выполнить действие так как вы не заполнили данные о временем и количеством CPU.");
 					system("pause");
 					break;
 				}
-
 				quickSort_mass = (int*)malloc(count * sizeof(int));
+				shell_mass
+					= (int*)malloc(count * sizeof(int));
 				shekerSort_mass = (int*)malloc(count * sizeof(int));
-				shell_mass = (int*)malloc(count * sizeof(int));
 				for (int i = 0; i < count; i++)
 				{
 					quickSort_mass[i] = mass[i];
@@ -583,7 +564,7 @@ int main()
 					}
 					_running = quickSort(mass, 0, -1, param_quickSort); // сортируем отдельно созданный массив
 					fl = 1;
-					sort1(fl, CPU_count, mass_CPU, running, mass_for_fird, count, mass, ost_time, CPU_summ, summ, file);
+					sort1(fl, cpu_size, mass_cpu, running, mass_for_fird, count, mass, ost_time, cpu_summ, summ, file);
 				}
 				else
 				{
@@ -600,7 +581,7 @@ int main()
 					}
 					_running = quickSort(mass, 0, count - 1, param_quickSort); // Сортируем массив
 					fl = 1;
-					sort1(fl, CPU_count, mass_CPU, running, mass_for_fird, count, mass, ost_time, CPU_summ, summ, file);
+					sort1(fl, cpu_size, mass_cpu, running, mass_for_fird, count, mass, ost_time, cpu_summ, summ, file);
 					break;
 
 			case 2:
@@ -615,7 +596,7 @@ int main()
 					}
 					_running = shekerSort(mass, count, param_shekerSort);
 					fl = 1;
-					sort1(fl, CPU_count, mass_CPU, running, mass_for_fird, count, mass, ost_time, CPU_summ, summ, file);
+					sort1(fl, cpu_size, mass_cpu, running, mass_for_fird, count, mass, ost_time, cpu_summ, summ, file);
 				}
 				else
 				{
@@ -634,7 +615,7 @@ int main()
 					}
 					_running = shekerSort(mass, count, param_shekerSort);
 					fl = 1;
-					sort1(fl, CPU_count, mass_CPU, running, mass_for_fird, count, mass, ost_time, CPU_summ, summ, file);
+					sort1(fl, cpu_size, mass_cpu, running, mass_for_fird, count, mass, ost_time, cpu_summ, summ, file);
 				}
 				break;
 
@@ -650,7 +631,7 @@ int main()
 					}
 					_running = shellSort(mass, count, param_shell);
 					fl = 1;
-					sort1(fl, CPU_count, mass_CPU, running, mass_for_fird, count, mass, ost_time, CPU_summ, summ, file);
+					sort1(fl, cpu_size, mass_cpu, running, mass_for_fird, count, mass, ost_time, cpu_summ, summ, file);
 				}
 				else
 				{
@@ -674,7 +655,7 @@ int main()
 					}
 					_running = shellSort(mass, count, param_shell);
 					fl = 1;
-					sort1(fl, CPU_count, mass_CPU, running, mass_for_fird, count, mass, ost_time, CPU_summ, summ, file);
+					sort1(fl, cpu_size, mass_cpu, running, mass_for_fird, count, mass, ost_time, cpu_summ, summ, file);
 				}
 				break;
 			default:
