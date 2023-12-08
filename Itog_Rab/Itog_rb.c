@@ -9,6 +9,151 @@
 #define MAX_FILENAME_LENGTH 100
 #define MAX_VALUE 100
 
+int sort1(int fl,int CPU_count,int* mass_CPU,int running,int* mass_for_fird,int count,int* mass,int ost_time,int CPU_summ,int summ, FILE* file) {
+	system("cls");
+	printf("|_________________________________________________________________|\n");
+	printf("|  Номер   |  Квант   |Суммарное |  Номер   |  Время   |Оставшееся|\n");
+	printf("| итерации |времени ЦП|Доступное |выбранного|выбранного| время ЦП |\n");
+	printf("|          |          |Время ЦП  |  потока  |  потока  |          |\n");
+	for (int i = 0; i < CPU_count; i++)
+	{
+		int dynamictime = mass_CPU[i];
+		while (dynamictime > 0)
+		{
+			int _count = 0;
+			int _num;
+			int _dynamictime = dynamictime;
+
+			running = binarySearch(mass_for_fird, count, dynamictime); // Ищем максимально приблеженное ко времени CPU Значения с помощью бинарного поиска
+			if (running == -1)
+			{
+				break;
+			}
+			_num = mass_for_fird[running]; // Записываем это занчение в переменную
+			for (int i = running; i > 0; i--) // Что бы это число больше не появлялось мы преобразуем его в 0 и перемещаем в начало массива
+			{
+				mass_for_fird[i] = mass_for_fird[i - 1];
+			}
+			mass_for_fird[_count] = 0;
+			_count++;
+			for (int i = 0; i < count; i++) // Ищем Этот поток в неотсортированном массиве и записываем его номер
+			{
+				if (mass[i] == _num)
+				{
+					running = i;
+				}
+			}
+			dynamictime = dynamictime - _num; // Считаем оставшееся время
+			printf("|_________________________________________________________________|\n");
+			printf("|%2s%-8d|%2s%-8d|%2s%-8d|%2s%-8d|%2s%-8d|%2s%-8d|\n", "", i, "", mass_CPU[i], "", _dynamictime, "", running + 1, "", _num, "", dynamictime); // Рисуем строку таблицы
+		}
+	}
+	if (fl = 1) {
+		printf_s("|_________________________________________________________________|\n");
+		ost_time = CPU_summ - summ;
+		if (ost_time < 0)
+		{
+			printf("Для выполнения всех потоков не хватило: %d секунд\n", ost_time);
+		}
+		else if (ost_time > 0)
+		{
+			printf("Излишнее время: %d\n", ost_time);
+		}
+		system("pause");
+	}
+	else {
+		fprintf(file, "|_________________________________________________________________|\n");
+		ost_time = CPU_summ - summ;
+		if (ost_time < 0)
+		{
+			fprintf(file, "Для выполнения всех потоков не хватило: %d секунд\n", ost_time);
+		}
+		else if (ost_time > 0)
+		{
+			fprintf(file, "Излишнее время: %d\n", ost_time);
+		}
+		printf("Файл успешно создан!\nНажмите любую клавишу что бы продолжить.");
+		fclose(file);
+		system("pause");
+	}
+	
+}
+int sort(int runningquickSort ,int runningcheckSort, int runningShell ,int _runningquickSort,int _runningcheckSort,int _runningShell, int* param_quickSort, int* param_shekerSort, int* param_shell,int running){
+	printf("|______________________________________________|\n");
+				printf("|Сортировка|   Время   |  Кол-во    |  Кол-во  |\n");
+				printf("|          |   работы  |перестановок|сравнений |\n");
+				if (runningquickSort == -1) {
+					printf("|______________________________________________|\n");
+					printf("|   Сортировка Хоара  |%-2.9f|%4s%-8d|%2s%-8d|\n", _runningquickSort, "", param_quickSort[0], "", param_quickSort[1]);
+				}
+				else {
+					printf("Ошибка на итерации: %d\n", running);
+				}
+				if (runningcheckSort == -1) {
+					printf("|______________________________________________|\n");
+					printf("|Шейкерная сортировка |%-2.9f|%4s%-8d|%2s%-8d|\n", _runningcheckSort, "", param_shekerSort[0], "", param_shekerSort[1]);
+				}
+				else {
+					printf("Ошибка на итерации: %d\n", running);
+				}
+
+				if (runningShell == -1) {
+					printf("|______________________________________________|\n");
+					printf("|   Шелла  |%-2.9f|%4s%-8d|%2s%-8d|\n", _runningShell, "", param_shell[0], "", param_shell[1]);
+					printf("|______________________________________________|\n");
+				}
+				else {
+					printf("Ошибка на итерации: %d\n", running);
+				}
+				system("pause");
+}
+int shekerSort(double* mass, int count, int* params)
+{
+	int left = 0, right = count - 1;
+	int flag = 1;
+	int startTime;
+	int finishTime;
+	int resTime;
+	int swaps = 0;
+	int cmps = 0;
+	startTime = omp_get_wtime();
+	while ((left < right) && flag > 0)
+	{
+
+		flag = 0;
+		for (int i = left; i < right; i++)
+		{
+			if (mass[i] > mass[i + 1])
+			{
+				cmps += 1;
+				double t = mass[i];
+				mass[i] = mass[i + 1];
+				mass[i + 1] = t;
+				flag = 1;
+				swaps += 1;
+			}
+		}
+		right--;
+		for (int i = right; i > left; i--)
+		{
+			if (mass[i - 1] > mass[i])
+			{
+				cmps += 1;
+				double t = mass[i];
+				mass[i] = mass[i - 1];
+				mass[i - 1] = t;
+				flag = 1;
+				swaps += 1;
+			}
+		}
+		left++;
+	}
+	params[0] = swaps;
+	params[1] = cmps;
+	finishTime = omp_get_wtime();
+	resTime = finishTime - startTime;
+	return resTime;
+}
 int binarySearch(int* mass, int size, int target)
 {
 	int low, high, middle;
@@ -48,81 +193,12 @@ int checkSort(int arr[], int size) {
 	}
 	return -1; // Все элементы отсортированы верно
 }
-int menu(int* point)
+int quickSort(int* numbers, int left, int right, int* params)
 {
-	int _turn;
-	int turn;
-	printf("МЕНЮ:\n");
-	printf("  1. Считать стостояние потока задач:\n");
-	printf("     Подменю:\n");
-	printf("       1. Сгенерировать рандомно (количество потоков задает пользователь)\n");
-	printf("       2. Прочитать из файла\n");
-	printf("       3. Назад\n");
-	printf("  2. Провести эксперемент по эффективности:\n");
-	printf("     Подменю:\n");
-	printf("       1. Всех сортировок\n");
-	printf("       2. Выбранной сортировки\n");
-	printf("       3. Назад\n");
-	printf("  3. Смоделировать процесс работы потоков\n");
-	printf("  4. Выход\n");
-	printf("Ваш выбор:");
-	scanf_s("%d", &turn);
-	while (turn < 1 || turn > 4)
-	{
-		printf("Некорректный ввод, попробуйте еще раз:");
-		scanf_s("%d", &turn);
-	}
-	point[0] = turn;
-	if (turn == 1 || turn == 2)
-	{
-		scanf_s("%d", &_turn);
-		while (turn < 1 || turn > 3)
-		{
-			printf("Некорректный ввод, попробуйте еще раз:");
-			scanf_s("%d", &_turn);
-		}
-		point[1] = _turn;
-	}
-	return turn;
-}
-
-
-int start_menu()
-{
-	int turn;
-
-	printf("Перед началом работы задайте время CPU\n");
-	printf("     Подменю:\n");
-	printf("       1. Сгенерировать рандомно\n");
-	printf("       2. Прочитать из файла\n");
-	printf("Ваш выбор: ");
-	scanf_s("%d", &turn);
-	while (turn < 1 || turn > 2)
-	{
-		printf("Некорректный ввод, попробуйте еще раз:");
-		scanf_s("%d", &turn);
-	}
-	return turn;
-}
-
-int fird_punct()
-{
-	int turn;
-	system("cls");
-	printf_s("1. Сортировка Хоара.\n2. . Сортировка Шелла.\n3. Шейкерная сортировка.\n Выберите сортировку: ");
-	scanf_s("%d", &turn);
-	while (turn < 1 || turn > 4)
-	{
-		printf("Некорректный ввод, попробуйте еще раз:");
-		scanf_s("%d", &turn);
-	}
-	return turn;
-}
-double quickSort(int* numbers, int left, int right, int* params)
-{
-	double startTime;
-	double finishTime;
-	double resTime;
+	
+	int startTime;
+	int finishTime;
+	int resTime;
 	int swaps = 0;
 	int cmps = 0;
 	startTime = omp_get_wtime();
@@ -165,10 +241,10 @@ double quickSort(int* numbers, int left, int right, int* params)
 	resTime = finishTime - startTime;
 	return resTime;
 }
-double shellSort(int arr[], int n, int* params) {
-	double startTime;
-	double finishTime;
-	double resTime;
+int shellSort(int* arr, int n, int* params) {
+	int startTime;
+	int finishTime;
+	int resTime;
 	int swaps = 0;
 	int cmps = 0;
 	startTime = omp_get_wtime();
@@ -192,53 +268,63 @@ double shellSort(int arr[], int n, int* params) {
 	return resTime;
 }
 
-double shekerSort(double* mass, int count, int* params)
+
+int menu(int* point)
 {
-	int left = 0, right = count - 1;
-	int flag = 1;
-	double startTime;
-	double finishTime;
-	double resTime;
-	int swaps = 0;
-	int cmps = 0;
-	startTime = omp_get_wtime();
-	while ((left < right) && flag > 0)
+	int _turn;
+	int turn;
+	printf_s("МЕНЮ:\n1. Считать стостояние потока задач:\n     Подменю:\n       1. Сгенерировать рандомно (количество потоков задает пользователь)\n       2. Прочитать из файла\n       3. Назад\n2. Провести эксперемент по эффективности:\n     Подменю:\n       1. Всех сортировок\n       2. Выбранной сортировки\n       3. Назад\n  3. Смоделировать процесс работы потоков\n  4. Выход\n");
+	printf_s("Ваш выбор:");
+	scanf_s("%d", &turn);
+	while (turn < 1 || turn > 4)
 	{
-		
-		flag = 0;
-		for (int i = left; i < right; i++)
-		{
-			if (mass[i] > mass[i + 1])
-			{
-				cmps += 1;
-				double t = mass[i];
-				mass[i] = mass[i + 1];
-				mass[i + 1] = t;
-				flag = 1;
-				swaps += 1;
-			}
-		}
-		right--;
-		for (int i = right; i > left; i--)
-		{
-			if (mass[i - 1] > mass[i])
-			{
-				cmps += 1;
-				double t = mass[i];
-				mass[i] = mass[i - 1];
-				mass[i - 1] = t;
-				flag = 1;
-				swaps += 1;
-			}
-		}
-		left++;
+		printf_s("Некорректный ввод, попробуйте еще раз:");
+		scanf_s("%d", &turn);
 	}
-	params[0] = swaps;
-	params[1] = cmps;
-	finishTime = omp_get_wtime();
-	resTime = finishTime - startTime;
-	return resTime;
+	point[0] = turn;
+	if (turn == 1 || turn == 2)
+	{
+		scanf_s("%d", &_turn);
+		while (turn < 1 || turn > 3)
+		{
+			printf_s("Некорректный ввод, попробуйте еще раз:");
+			scanf_s("%d", &_turn);
+		}
+		point[1] = _turn;
+	}
+	return turn;
 }
+
+
+int start_menu()
+{
+	int turn;
+
+	printf_s("Перед началом работы задайте время CPU\n     Подменю:\n       1. Сгенерировать рандомно\n       2. Прочитать из файла\n");
+	printf_s("Ваш выбор: ");
+	scanf_s("%d", &turn);
+	while (turn < 1 || turn > 2)
+	{
+		printf_s("Некорректный ввод, попробуйте еще раз:");
+		scanf_s("%d", &turn);
+	}
+	return turn;
+}
+
+int fird_punct()
+{
+	int turn;
+	system("cls");
+	printf_s("1.Сортировка Хоара.\n2.Сортировка Шелла.\n3.Шейкерная сортировка.\n Выберите сортировку: ");
+	scanf_s("%d", &turn);
+	while (turn < 1 || turn > 4)
+	{
+		printf_s("Некорректный ввод, попробуйте еще раз:");
+		scanf_s("%d", &turn);
+	}
+	return turn;
+}
+
 int main()
 {
 	// Инициализация всех переменных с которыми будем работать
@@ -251,26 +337,26 @@ int main()
 	int* quickSort_mass;
 	int* shell_mass;
 	int running;
-	double _running;
+	int _running;
 	int count;
 	int CPU_count;
 	int CPU_summ = 0;
 	int summ = 0;
-	int ost_time;
+	int ost_time=0;
 	int point[2] = { 0, 0 };
-	int param_buble[2] = { 0, 0 };
-	int param_counting[2] = { 0, 0 };
+	int param_quickSort[2] = { 0, 0 };
+	int param_shekerSort[2] = { 0, 0 };
 	int param_merge[2] = { 0, 0 };
 	int param_shell[2] = { 0, 0 };
+	int fl;
 
-	
 	running = start_menu();
 	switch (running)
 	{
 	case 1:
 		printf_s("Введите количество потоков : ");
 		scanf_s("%d", &CPU_count); // задается количество потоков CPU
-		mass_CPU = (int*)malloc(CPU_count * sizeof(int)); 
+		mass_CPU = (int*)malloc(CPU_count * sizeof(int));
 		for (int i = 0; i < CPU_count; i++)
 		{
 			mass_CPU[i] = 1 + rand() % 1001; // массив заполняется рандомными значениями.
@@ -280,23 +366,23 @@ int main()
 		printf_s("Введите количество чисел: ");
 		scanf_s("%d", &CPU_count);
 
-		mass_CPU = (int*)malloc(CPU_count * sizeof(int)); 
+		mass_CPU = (int*)malloc(CPU_count * sizeof(int));
 
-		printf_s("Введите данные в ports.txt (\\Itog_Rab\\Itog_Rab), после чего перезапустите программу\n");
+		printf_s("Введите данные в Max.txt (\\Itog_Rab\\Itog_Rab), после чего перезапустите программу\n");
 		system("pause");
 
-		
-		char adr[100] = "\\Itog_Rab\\Itog_Rab"; 
-		char CPU_file[100] = "Max.txt"; 
+
+		char adr[100] = "\\Itog_Rab\\Itog_Rab";
+		char CPU_file[100] = "Max.txt";
 		char CPU_way[200];
 
 		FILE* input_file_CPU = NULL;
 		errno_t error1;
 		errno_t error2;
 
-		strcpy_s(CPU_way, sizeof CPU_way, adr); // Записываем в файл сначала путь а потом название файла и получаем полный адресс файла
+		strcpy_s(CPU_way, sizeof CPU_way, adr);
 		strncat_s(CPU_way, 100, CPU_file, 100);
-		error1 = fopen_s(&input_file_CPU, CPU_way, "r+"); // Открываем файл
+		error1 = fopen_s(&input_file_CPU, CPU_way, "r+");
 
 		if (input_file_CPU == 0)
 		{
@@ -305,10 +391,10 @@ int main()
 		}
 
 		for (int i = 0; i < CPU_count; i++) {
-			fscanf_s(input_file_CPU, "%d", &mass_CPU[i]); // Записываем данные из файла в массив
+			fscanf_s(input_file_CPU, "%d", &mass_CPU[i]);
 		}
 
-		fclose(input_file_CPU); // закрываем файл
+		fclose(input_file_CPU);
 		printf_s("Массив успешно создан!\nНажмите любую клавишу что бы продолжить.");
 		system("pause");
 		break;
@@ -329,12 +415,12 @@ int main()
 			switch (point[1])
 			{
 			case 1:
-				printf("Введите количество потоков: "); 
+				printf("Введите количество потоков: ");
 				scanf_s("%d", &count);
 				mass = (int*)malloc(count * sizeof(int));
 				for (int i = 0; i < count; i++)
 				{
-					mass[i] = 1 + rand() % 255; 
+					mass[i] = 1 + rand() % 255;
 				}
 				for (int i = 0; i < CPU_count; i++)
 				{
@@ -353,19 +439,19 @@ int main()
 				printf("Введите данные в ports.txt (\\Itog_Rab\\Itog_Rab), после чего перезапустите программу\n");
 				system("pause");
 
-				
 
-				char adr[100] = "\\Itog_Rab\\Itog_Rab"; 
-				char Flow_file[100] = "ports.txt"; 
-				char Flow_way[200]; // Переменная в которой будет содержаться полный адресс файла
+
+				char adr[100] = "\\Itog_Rab\\Itog_Rab";
+				char Flow_file[100] = "ports.txt";
+				char Flow_way[200];
 
 				FILE* input_file_Flow = NULL;
 				errno_t error1;
 				errno_t error2;
 
-				strcpy_s(Flow_way, sizeof Flow_way, adr); // Записываем в файл сначала путь а потом название файла и получаем полный адресс файла
+				strcpy_s(Flow_way, sizeof Flow_way, adr);
 				strncat_s(Flow_way, 100, Flow_file, 100);
-				error1 = fopen_s(&input_file_Flow, Flow_way, "r+"); // Открываем файл
+				error1 = fopen_s(&input_file_Flow, Flow_way, "r+");
 
 				if (input_file_Flow == 0)
 				{
@@ -374,10 +460,10 @@ int main()
 				}
 
 				for (int i = 0; i < count; i++) {
-					fscanf_s(input_file_Flow, "%d", &mass[i]); // сканируем данные из файла в массив
+					fscanf_s(input_file_Flow, "%d", &mass[i]);
 				}
 
-				fclose(input_file_Flow); // Закрываем файл
+				fclose(input_file_Flow);
 				for (int i = 0; i < CPU_count; i++)
 				{
 					summ += mass[i];
@@ -407,9 +493,9 @@ int main()
 					system("pause");
 					break;
 				}
-				
+
 				quickSort_mass = (int*)malloc(count * sizeof(int));
-				shekerSort_mass = (int*)malloc(count * sizeof(int));   
+				shekerSort_mass = (int*)malloc(count * sizeof(int));
 				shell_mass = (int*)malloc(count * sizeof(int));
 				for (int i = 0; i < count; i++)
 				{
@@ -420,55 +506,29 @@ int main()
 				int runningquickSort = 0;
 				int runningcheckSort = 0;
 				int runningShell = 0;
-				double _runningquickSort = 0;       
-				double _runningcheckSort = 0;
-				double _runningShell = 0;
-				_runningquickSort = quickSort(quickSort_mass,0, -1, param_buble);
+				int _runningquickSort = 0;
+				int _runningcheckSort = 0;
+				int _runningShell = 0;
+				_runningquickSort = quickSort(quickSort_mass, 0, -1, param_quickSort);
 				runningquickSort = checkSort(quickSort_mass, count);
-				_runningcheckSort = shekerSort(shekerSort_mass, count, param_counting);
-				runningcheckSort = checkSort(shekerSort_mass, count);				
+				_runningcheckSort = shekerSort(shekerSort_mass, count, param_shekerSort);
+				runningcheckSort = checkSort(shekerSort_mass, count);
 				_runningShell = shellSort(shell_mass, count, param_shell);
 				runningShell = checkSort(shell_mass, count);
-				printf("|______________________________________________|\n");
-				printf("|Сортировка|   Время   |  Кол-во    |  Кол-во  |\n");
-				printf("|          |   работы  |перестановок|сравнений |\n");
-				if (runningquickSort == -1) { 
-					printf("|______________________________________________|\n");
-					printf("|   Сортировка Хоара  |%-2.9f|%4s%-8d|%2s%-8d|\n", _runningquickSort, "", param_buble[0], "", param_buble[1]);
-				}
-				else {
-					printf("Ошибка на итерации: %d\n", running);
-				}
-				if (runningcheckSort == -1) {
-					printf("|______________________________________________|\n");
-					printf("|Шейкерная сортировка |%-2.9f|%4s%-8d|%2s%-8d|\n", _runningcheckSort, "", param_counting[0], "", param_counting[1]);
-				}
-				else {
-					printf("Ошибка на итерации: %d\n", running);
-				}
-				
-				if (runningShell == -1) {
-					printf("|______________________________________________|\n");
-					printf("|   Шелла  |%-2.9f|%4s%-8d|%2s%-8d|\n", _runningShell, "", param_shell[0], "", param_shell[1]);
-					printf("|______________________________________________|\n");
-				}
-				else {
-					printf("Ошибка на итерации: %d\n", running);
-				}
-				system("pause");
+				sort(runningquickSort, runningcheckSort, runningShell, _runningquickSort, _runningcheckSort, _runningShell, param_quickSort, param_shekerSort, param_shell, running);
 				break;
 			case 2:
 				system("cls");
-				printf_s("1. Сортировка Хоара.\n2. . Сортировка Шелла.\n3. Шейкерная сортировка.\n Выберите сортировку: ");
+				printf_s("1. Сортировка Хоара.\n2.  Сортировка Шелла.\n3. Шейкерная сортировка.\n Выберите сортировку: ");
 				int turn = 0;
 				scanf_s("%d", &turn);
 				switch (turn)
 				{
 				case 1:
-					_running = quickSort(mass, 0, -1, param_buble);
+					_running = quickSort(mass, 0, 1, param_quickSort);
 					running = checkSort(mass, count);  // запускаем проверку сортировки
-					if (running == -1) {  
-						printf("Результат сортировки buble (критерии эффективности): перестановок = %d, сравнений = %d, время работы метода = %15.10lf мс\n", param_buble[0], param_buble[1], _running);
+					if (running == -1) {
+						printf("Результат сортировки Сортировка Хоара (критерии эффективности): перестановок = %d, сравнений = %d, время работы метода = %15.10lf мс\n", param_quickSort[0], param_quickSort[1], _running);
 					}
 					else {
 						printf("Ошибка на итерации: %d\n", running);
@@ -476,10 +536,10 @@ int main()
 					system("pause");
 					break;
 				case 2:
-					_running = shekerSort(mass, count, param_counting);
-					running = checkSort(mass, count); 
-					if (running == -1) {  
-						printf("Результат сортировки подсчетом (критерии эффективности): перестановок = %d, сравнений = %d, время работы метода = %15.10lf мс\n", param_counting[0], param_counting[1], _running);
+					_running = shekerSort(mass, count, param_shekerSort);
+					running = checkSort(mass, count);
+					if (running == -1) {
+						printf("Результат сортировки  Шейкерная сортировка (критерии эффективности): перестановок = %d, сравнений = %d, время работы метода = %15.10lf мс\n", param_shekerSort[0], param_shekerSort[1], _running);
 					}
 					else {
 						printf("Ошибка на итерации: %d\n", running);
@@ -508,67 +568,22 @@ int main()
 			}
 			break;
 		case 3:
-			running = fird_punct(); 
+			running = fird_punct();
 			switch (running)
 			{
 			case 1:
-				if (count < 20) 
+				if (count < 20)
 				{
-					mass_for_fird = (int*)malloc(count * sizeof(int)); 
+					FILE* file;
+					fopen_s(&file, "ans_shell.txt", "w");
+					mass_for_fird = (int*)malloc(count * sizeof(int));
 					for (int i = 0; i < count; i++)
 					{
-						mass_for_fird[i] = mass[i]; 
+						mass_for_fird[i] = mass[i];
 					}
-					_running = quickSort(mass, 0, -1, param_buble); // сортируем отдельно созданный массив
-					system("cls");
-					printf("|_________________________________________________________________|\n");
-					printf("|  Номер   |  Квант   |Суммарное |  Номер   |  Время   |Оставшееся|\n");
-					printf("| итерации |времени ЦП|Доступное |выбранного|выбранного| время ЦП |\n");  
-					printf("|          |          |Время ЦП  |  потока  |  потока  |          |\n");
-					for (int i = 0; i < CPU_count; i++)
-					{
-						int dynamictime = mass_CPU[i]; 
-						while (dynamictime > 0)
-						{
-							int _count = 0;
-							int _num;
-							int _dynamictime = dynamictime;
-
-							running = binarySearch(mass_for_fird, count, dynamictime); // Ищем максимально приблеженное ко времени CPU Значения с помощью бинарного поиска
-							if (running == -1)
-							{
-								break;
-							}
-							_num = mass_for_fird[running]; // Записываем это занчение в переменную
-							for (int i = running; i > 0; i--) // Что бы это число больше не появлялось мы преобразуем его в 0 и перемещаем в начало массива
-							{
-								mass_for_fird[i] = mass_for_fird[i - 1];
-							}
-							mass_for_fird[_count] = 0;
-							_count++;
-							for (int i = 0; i < count; i++) // Ищем Этот поток в неотсортированном массиве и записываем его номер
-							{
-								if (mass[i] == _num)
-								{
-									running = i;
-								}
-							}
-							dynamictime = dynamictime - _num; // Считаем оставшееся время
-							printf("|_________________________________________________________________|\n");
-							printf("|%2s%-8d|%2s%-8d|%2s%-8d|%2s%-8d|%2s%-8d|%2s%-8d|\n", "", i, "", mass_CPU[i], "", _dynamictime, "", running + 1, "", _num, "", dynamictime); // Рисуем строку таблицы
-						}
-					}
-					printf("|_________________________________________________________________|\n");
-					ost_time = CPU_summ - summ;
-					if (ost_time < 0)
-					{
-						printf("Для выполнения всех потоков не хватило: %d секунд\n", ost_time);
-					}
-					else if (ost_time > 0)
-					{
-						printf("Излишнее время: %d\n", ost_time);
-					}
-					system("pause");
+					_running = quickSort(mass, 0, -1, param_quickSort); // сортируем отдельно созданный массив
+					fl = 1;
+					sort1(fl, CPU_count, mass_CPU, running, mass_for_fird, count, mass, ost_time, CPU_summ, summ, file);
 				}
 				else
 				{
@@ -583,120 +598,24 @@ int main()
 					{
 						mass_for_fird[i] = mass[i]; // Записываем в него значения
 					}
-					_running = quickSort(mass, 0,count-1, param_buble); // Сортируем массив
-					fprintf(file, "|_________________________________________________________________|\n");
-					fprintf(file, "|  Номер   |  Квант   |Суммарное |  Номер   |  Время   |Оставшееся|\n");
-					fprintf(file, "| итерации |времени ЦП|Доступное |выбранного|выбранного| время ЦП |\n");
-					fprintf(file, "|          |          |Время ЦП  |  потока  |  потока  |          |\n");
-					for (int i = 0; i < CPU_count; i++)
-					{
-						int dynamictime = mass_CPU[i];
-						while (dynamictime > 0)
-						{
+					_running = quickSort(mass, 0, count - 1, param_quickSort); // Сортируем массив
+					fl = 1;
+					sort1(fl, CPU_count, mass_CPU, running, mass_for_fird, count, mass, ost_time, CPU_summ, summ, file);
+					break;
 
-							int _count = 0;
-							int _num;
-							int _dynamictime = dynamictime;
-
-							running = binarySearch(mass_for_fird, count, dynamictime);
-							if (running == -1)
-							{
-								break;
-							}
-							_num = mass_for_fird[running];
-							for (int i = running; i > 0; i--) 
-							{
-								mass_for_fird[i] = mass_for_fird[i - 1];
-							}
-							mass_for_fird[_count] = 0;
-							_count++;
-							for (int i = 0; i < count; i++)
-							{
-								if (mass[i] == _num)
-								{
-									running = i;
-								}
-							}
-							dynamictime = dynamictime - _num; 
-							fprintf(file, "|_________________________________________________________________|\n");
-							fprintf(file, "|%2s%-8d|%2s%-8d|%2s%-8d|%2s%-8d|%2s%-8d|%2s%-8d|\n", "", i, "", mass_CPU[i], "", _dynamictime, "", running + 1, "", _num, "", dynamictime); 
-						}
-					}
-					fprintf(file, "|_________________________________________________________________|\n");
-					ost_time = CPU_summ - summ;
-					if (ost_time < 0)
-					{
-						fprintf(file, "Для выполнения всех потоков не хватило: %d секунд\n", ost_time);
-					}
-					else if (ost_time > 0)
-					{
-						fprintf(file, "Излишнее время: %d\n", ost_time);
-					}
-					printf("Файл успешно создан!\nНажмите любую клавишу что бы продолжить.");
-					fclose(file);
-					system("pause");
-				}
-				break;
-				
 			case 2:
 				if (count < 20)
 				{
+					FILE* file;
+					fopen_s(&file, "ans_shell.txt", "w");
 					mass_for_fird = (int*)malloc(count * sizeof(int));
 					for (int i = 0; i < count; i++)
 					{
 						mass_for_fird[i] = mass[i];
 					}
-					_running = shekerSort(mass, count, param_counting);
-					system("cls");
-					printf("|_________________________________________________________________|\n");
-					printf("|  Номер   |  Квант   |Суммарное |  Номер   |  Время   |Оставшееся|\n");
-					printf("| итерации |времени ЦП|Доступное |выбранного|выбранного| время ЦП |\n");
-					printf("|          |          |Время ЦП  |  потока  |  потока  |          |\n");
-					for (int i = 0; i < CPU_count; i++)
-					{
-						int dynamictime = mass_CPU[i];
-						while (dynamictime > 0)
-						{
-
-							int _count = 0;
-							int _num;
-							int _dynamictime = dynamictime;
-
-							running = binarySearch(mass_for_fird, count, dynamictime);
-							if (running == -1)
-							{
-								break;
-							}
-							_num = mass_for_fird[running];
-							for (int i = running; i > 0; i--)
-							{
-								mass_for_fird[i] = mass_for_fird[i - 1];
-							}
-							mass_for_fird[_count] = 0;
-							_count++;
-							for (int i = 0; i < count; i++)
-							{
-								if (mass[i] == _num)
-								{
-									running = i;
-								}
-							}
-							dynamictime = dynamictime - _num;
-							printf("|_________________________________________________________________|\n");
-							printf("|%2s%-8d|%2s%-8d|%2s%-8d|%2s%-8d|%2s%-8d|%2s%-8d|\n", "", i, "", mass_CPU[i], "", _dynamictime, "", running + 1, "", _num, "", dynamictime);
-						}
-					}
-					printf("|_________________________________________________________________|\n");
-					ost_time = CPU_summ - summ;
-					if (ost_time < 0)
-					{
-						printf("Для выполнения всех потоков не хватило: %d секунд\n", ost_time);
-					}
-					else if (ost_time > 0)
-					{
-						printf("Излишнее время: %d\n", ost_time);
-					}
-					system("pause");
+					_running = shekerSort(mass, count, param_shekerSort);
+					fl = 1;
+					sort1(fl, CPU_count, mass_CPU, running, mass_for_fird, count, mass, ost_time, CPU_summ, summ, file);
 				}
 				else
 				{
@@ -713,119 +632,25 @@ int main()
 					{
 						mass_for_fird[i] = mass[i];
 					}
-					_running = shekerSort(mass, count, param_counting);
-					fprintf(file, "|_________________________________________________________________|\n");
-					fprintf(file, "|  Номер   |  Квант   |Суммарное |  Номер   |  Время   |Оставшееся|\n");
-					fprintf(file, "| итерации |времени ЦП|Доступное |выбранного|выбранного| время ЦП |\n");
-					fprintf(file, "|          |          |Время ЦП  |  потока  |  потока  |          |\n");
-					for (int i = 0; i < CPU_count; i++)
-					{
-						int dynamictime = mass_CPU[i];
-						while (dynamictime > 0)
-						{
-
-							int _count = 0;
-							int _num;
-							int _dynamictime = dynamictime;
-
-							running = binarySearch(mass_for_fird, count, dynamictime);
-							if (running == -1)
-							{
-								break;
-							}
-							_num = mass_for_fird[running];
-							for (int i = running; i > 0; i--)
-							{
-								mass_for_fird[i] = mass_for_fird[i - 1];
-							}
-							mass_for_fird[_count] = 0;
-							_count++;
-							for (int i = 0; i < count; i++)
-							{
-								if (mass[i] == _num)
-								{
-									running = i;
-								}
-							}
-							dynamictime = dynamictime - _num;
-							fprintf(file, "|_________________________________________________________________|\n");
-							fprintf(file, "|%2s%-8d|%2s%-8d|%2s%-8d|%2s%-8d|%2s%-8d|%2s%-8d|\n", "", i, "", mass_CPU[i], "", _dynamictime, "", running + 1, "", _num, "", dynamictime);
-						}
-					}
-					fprintf(file, "|_________________________________________________________________|\n");
-					ost_time = CPU_summ - summ;
-					if (ost_time < 0)
-					{
-						fprintf(file, "Для выполнения всех потоков не хватило: %d секунд\n", ost_time);
-					}
-					else if (ost_time > 0)
-					{
-						fprintf(file, "Излишнее время: %d\n", ost_time);
-					}
-					printf("Файл успешно создан!\nНажмите любую клавишу что бы продолжить.");
-					fclose(file);
-					system("pause");
+					_running = shekerSort(mass, count, param_shekerSort);
+					fl = 1;
+					sort1(fl, CPU_count, mass_CPU, running, mass_for_fird, count, mass, ost_time, CPU_summ, summ, file);
 				}
 				break;
-			
+
 			case 3:
 				if (count < 20)
 				{
+					FILE* file;
+					fopen_s(&file, "ans_shell.txt", "w");
 					mass_for_fird = (int*)malloc(count * sizeof(int));
 					for (int i = 0; i < count; i++)
 					{
 						mass_for_fird[i] = mass[i];
 					}
 					_running = shellSort(mass, count, param_shell);
-					system("cls");
-					printf("|_________________________________________________________________|\n");
-					printf("|  Номер   |  Квант   |Суммарное |  Номер   |  Время   |Оставшееся|\n");
-					printf("| итерации |времени ЦП|Доступное |выбранного|выбранного| время ЦП |\n");
-					printf("|          |          |Время ЦП  |  потока  |  потока  |          |\n");
-					for (int i = 0; i < CPU_count; i++)
-					{
-						int dynamictime = mass_CPU[i];
-						while (dynamictime > 0)
-						{
-							int _count = 0;
-							int _num;
-							int _dynamictime = dynamictime;
-
-							running = binarySearch(mass_for_fird, count, dynamictime);
-							if (running == -1)
-							{
-								break;
-							}
-							_num = mass_for_fird[running];
-							for (int i = running; i > 0; i--)
-							{
-								mass_for_fird[i] = mass_for_fird[i - 1];
-							}
-							mass_for_fird[_count] = 0;
-							_count++;
-							for (int i = 0; i < count; i++)
-							{
-								if (mass[i] == _num)
-								{
-									running = i;
-								}
-							}
-							dynamictime = dynamictime - _num;
-							printf("|_________________________________________________________________|\n");
-							printf("|%2s%-8d|%2s%-8d|%2s%-8d|%2s%-8d|%2s%-8d|%2s%-8d|\n", "", i, "", mass_CPU[i], "", _dynamictime, "", running + 1, "", _num, "", dynamictime);
-						}
-					}
-					printf("|_________________________________________________________________|\n");
-					ost_time = CPU_summ - summ;
-					if (ost_time < 0)
-					{
-						printf("Для выполнения всех потоков не хватило: %d секунд\n", ost_time);
-					}
-					else if (ost_time > 0)
-					{
-						printf("Излишнее время: %d\n", ost_time);
-					}
-					system("pause");
+					fl = 1;
+					sort1(fl, CPU_count, mass_CPU, running, mass_for_fird, count, mass, ost_time, CPU_summ, summ, file);
 				}
 				else
 				{
@@ -848,65 +673,20 @@ int main()
 						mass_for_fird[i] = mass[i];
 					}
 					_running = shellSort(mass, count, param_shell);
-					fprintf(file, "|_________________________________________________________________|\n");
-					fprintf(file, "|  Номер   |  Квант   |Суммарное |  Номер   |  Время   |Оставшееся|\n");
-					fprintf(file, "| итерации |времени ЦП|Доступное |выбранного|выбранного| время ЦП |\n");
-					fprintf(file, "|          |          |Время ЦП  |  потока  |  потока  |          |\n");
-					for (int i = 0; i < CPU_count; i++)
-					{
-						int dynamictime = mass_CPU[i];
-						while (dynamictime > 0)
-						{
-							int _count = 0;
-							int _num;
-							int _dynamictime = dynamictime;
-
-							running = binarySearch(mass_for_fird, count, dynamictime);
-							if (running == -1)
-							{
-								break;
-							}
-							_num = mass_for_fird[running];
-							for (int i = running; i > 0; i--)
-							{
-								mass_for_fird[i] = mass_for_fird[i - 1];
-							}
-							mass_for_fird[_count] = 0;
-							_count++;
-							for (int i = 0; i < count; i++)
-							{
-								if (mass[i] == _num)
-								{
-									running = i;
-								}
-							}
-							dynamictime = dynamictime - _num;
-							fprintf(file, "|_________________________________________________________________|\n");
-							fprintf(file, "|%2s%-8d|%2s%-8d|%2s%-8d|%2s%-8d|%2s%-8d|%2s%-8d|\n", "", i, "", mass_CPU[i], "", _dynamictime, "", running + 1, "", _num, "", dynamictime);
-						}
-					}
-					fprintf(file, "|_________________________________________________________________|\n");
-					ost_time = CPU_summ - summ;
-					if (ost_time < 0)
-					{
-						fprintf(file, "Для выполнения всех потоков не хватило: %d секунд\n", ost_time);
-					}
-					else if (ost_time > 0)
-					{
-						fprintf(file, "Излишнее время: %d\n", ost_time);
-					}
-					printf("Файл успешно создан!\nНажмите любую клавишу что бы продолжить.");
-					fclose(file);
-					system("pause");
+					fl = 1;
+					sort1(fl, CPU_count, mass_CPU, running, mass_for_fird, count, mass, ost_time, CPU_summ, summ, file);
 				}
 				break;
 			default:
 				break;
+				}
+			case 4:
+				return 0;
+			
 			}
 		case 4:
 			return 0;
-		default:
-			break;
 		}
+		
 	}
 }
