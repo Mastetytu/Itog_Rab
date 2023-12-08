@@ -6,16 +6,16 @@
 #include <time.h>
 #include <malloc.h>
 
-#define MAX_FILENAME_LENGTH 100
-#define MAX_VALUE 100
 
-int sort1(int fl,int CPU_count,int* mass_CPU,int running,int* mass_for_fird,int count,int* mass,int ost_time,int CPU_summ,int summ, FILE* file) {
+
+//менюшки
+int sort1(int fl, int cpu_count, int* mass_CPU, int running, int* mass_for_fird, int count, int* mass, int ost_time, int cpu_summ, int summ, FILE* file) {
 	system("cls");
 	printf("|_________________________________________________________________|\n");
 	printf("|  Номер   |  Квант   |Суммарное |  Номер   |  Время   |Оставшееся|\n");
 	printf("| итерации |времени ЦП|Доступное |выбранного|выбранного| время ЦП |\n");
 	printf("|          |          |Время ЦП  |  потока  |  потока  |          |\n");
-	for (int i = 0; i < CPU_count; i++)
+	for (int i = 0; i < cpu_count; i++)
 	{
 		int dynamictime = mass_CPU[i];
 		while (dynamictime > 0)
@@ -24,7 +24,7 @@ int sort1(int fl,int CPU_count,int* mass_CPU,int running,int* mass_for_fird,int 
 			int _num;
 			int _dynamictime = dynamictime;
 
-			running = binarySearch(mass_for_fird, count, dynamictime); // Ищем максимально приблеженное ко времени CPU Значения с помощью бинарного поиска
+			running = BSear(mass_for_fird, count, dynamictime); // Ищем максимально приблеженное ко времени CPU Значения с помощью бинарного поиска
 			if (running == -1)
 			{
 				break;
@@ -50,7 +50,7 @@ int sort1(int fl,int CPU_count,int* mass_CPU,int running,int* mass_for_fird,int 
 	}
 	if (fl = 1) {
 		printf_s("|_________________________________________________________________|\n");
-		ost_time = CPU_summ - summ;
+		ost_time = cpu_summ - summ;
 		if (ost_time < 0)
 		{
 			printf("Для выполнения всех потоков не хватило: %d секунд\n", ost_time);
@@ -63,7 +63,7 @@ int sort1(int fl,int CPU_count,int* mass_CPU,int running,int* mass_for_fird,int 
 	}
 	else {
 		fprintf(file, "|_________________________________________________________________|\n");
-		ost_time = CPU_summ - summ;
+		ost_time = cpu_summ - summ;
 		if (ost_time < 0)
 		{
 			fprintf(file, "Для выполнения всех потоков не хватило: %d секунд\n", ost_time);
@@ -76,37 +76,94 @@ int sort1(int fl,int CPU_count,int* mass_CPU,int running,int* mass_for_fird,int 
 		fclose(file);
 		system("pause");
 	}
-	
-}
-int sort(int runningquickSort ,int runningcheckSort, int runningShell ,int _runningquickSort,int _runningcheckSort,int _runningShell, int* param_quickSort, int* param_shekerSort, int* param_shell,int running){
-	printf("|______________________________________________|\n");
-				printf("|Сортировка|   Время   |  Кол-во    |  Кол-во  |\n");
-				printf("|          |   работы  |перестановок|сравнений |\n");
-				if (runningquickSort == -1) {
-					printf("|______________________________________________|\n");
-					printf("|   Сортировка Хоара  |%-2.9f|%4s%-8d|%2s%-8d|\n", _runningquickSort, "", param_quickSort[0], "", param_quickSort[1]);
-				}
-				else {
-					printf("Ошибка на итерации: %d\n", running);
-				}
-				if (runningcheckSort == -1) {
-					printf("|______________________________________________|\n");
-					printf("|Шейкерная сортировка |%-2.9f|%4s%-8d|%2s%-8d|\n", _runningcheckSort, "", param_shekerSort[0], "", param_shekerSort[1]);
-				}
-				else {
-					printf("Ошибка на итерации: %d\n", running);
-				}
 
-				if (runningShell == -1) {
-					printf("|______________________________________________|\n");
-					printf("|   Шелла  |%-2.9f|%4s%-8d|%2s%-8d|\n", _runningShell, "", param_shell[0], "", param_shell[1]);
-					printf("|______________________________________________|\n");
-				}
-				else {
-					printf("Ошибка на итерации: %d\n", running);
-				}
-				system("pause");
 }
+int menu(int* point)
+{
+	int _turn;
+	int turn;
+	printf_s("МЕНЮ:\n1. Считать стостояние потока задач:\n     Подменю:\n       1. Сгенерировать рандомно (количество потоков задает пользователь)\n       2. Прочитать из файла\n       3. Назад\n2. Провести эксперемент по эффективности:\n     Подменю:\n       1. Всех сортировок\n       2. Выбранной сортировки\n       3. Назад\n  3. Смоделировать процесс работы потоков\n  4. Выход\n");
+	printf_s("Ваш выбор:");
+	scanf_s("%d", &turn);
+	while (turn < 1 || turn > 4)
+	{
+		printf_s("Некорректный ввод, попробуйте еще раз:");
+		scanf_s("%d", &turn);
+	}
+	point[0] = turn;
+	if (turn == 1 || turn == 2)
+	{
+		scanf_s("%d", &_turn);
+		while (turn < 1 || turn > 3)
+		{
+			printf_s("Некорректный ввод, попробуйте еще раз:");
+			scanf_s("%d", &_turn);
+		}
+		point[1] = _turn;
+	}
+	return turn;
+}
+int start_menu()
+{
+	int turn;
+
+	printf_s("Перед началом работы задайте время CPU\n     Подменю:\n       1. Сгенерировать рандомно\n       2. Прочитать из файла\n");
+	printf_s("Ваш выбор: ");
+	scanf_s("%d", &turn);
+	while (turn < 1 || turn > 2)
+	{
+		printf_s("Некорректный ввод, попробуйте еще раз:");
+		scanf_s("%d", &turn);
+	}
+	return turn;
+}
+int vid_sort_menu()
+{
+	int turn;
+	system("cls");
+	printf_s("1.Сортировка Хоара.\n2.Сортировка Шелла.\n3.Шейкерная сортировка.\n Выберите сортировку: ");
+	scanf_s("%d", &turn);
+	while (turn < 1 || turn > 4)
+	{
+		printf_s("Некорректный ввод, попробуйте еще раз:");
+		scanf_s("%d", &turn);
+	}
+	return turn;
+}
+int sort(int runningquickSort, int runningcheckSort, int runningShell, int _runningquickSort, int _runningcheckSort, int _runningShell, int* param_quickSort, int* param_shekerSort, int* param_shell, int running) {
+	printf("|______________________________________________|\n");
+	printf("|Сортировка|   Время   |  Кол-во    |  Кол-во  |\n");
+	printf("|          |   работы  |перестановок|сравнений |\n");
+	if (runningquickSort == -1) {
+		printf("|______________________________________________|\n");
+		printf("|   Сортировка Хоара  |%-2.9f|%4s%-8d|%2s%-8d|\n", _runningquickSort, "", param_quickSort[0], "", param_quickSort[1]);
+	}
+	else {
+		printf("Ошибка на итерации: %d\n", running);
+	}
+	if (runningcheckSort == -1) {
+		printf("|______________________________________________|\n");
+		printf("|Шейкерная сортировка |%-2.9f|%4s%-8d|%2s%-8d|\n", _runningcheckSort, "", param_shekerSort[0], "", param_shekerSort[1]);
+	}
+	else {
+		printf("Ошибка на итерации: %d\n", running);
+	}
+
+	if (runningShell == -1) {
+		printf("|______________________________________________|\n");
+		printf("|   Шелла  |%-2.9f|%4s%-8d|%2s%-8d|\n", _runningShell, "", param_shell[0], "", param_shell[1]);
+		printf("|______________________________________________|\n");
+	}
+	else {
+		printf("Ошибка на итерации: %d\n", running);
+	}
+	system("pause");
+}
+
+
+
+
+//реализация сортировок
 int shekerSort(double* mass, int count, int* params)
 {
 	int left = 0, right = count - 1;
@@ -154,7 +211,7 @@ int shekerSort(double* mass, int count, int* params)
 	resTime = finishTime - startTime;
 	return resTime;
 }
-int binarySearch(int* mass, int size, int target)
+int BSear(int* mass, int size, int target)
 {
 	int low, high, middle;
 	low = 0;
@@ -182,7 +239,7 @@ int binarySearch(int* mass, int size, int target)
 	{
 		return -1;
 	}
-	return binarySearch(mass, size, target - 1);
+	return BSear(mass, size, target - 1);
 }
 int checkSort(int arr[], int size) {
 	int i;
@@ -268,62 +325,6 @@ int shellSort(int* arr, int n, int* params) {
 	return resTime;
 }
 
-
-int menu(int* point)
-{
-	int _turn;
-	int turn;
-	printf_s("МЕНЮ:\n1. Считать стостояние потока задач:\n     Подменю:\n       1. Сгенерировать рандомно (количество потоков задает пользователь)\n       2. Прочитать из файла\n       3. Назад\n2. Провести эксперемент по эффективности:\n     Подменю:\n       1. Всех сортировок\n       2. Выбранной сортировки\n       3. Назад\n  3. Смоделировать процесс работы потоков\n  4. Выход\n");
-	printf_s("Ваш выбор:");
-	scanf_s("%d", &turn);
-	while (turn < 1 || turn > 4)
-	{
-		printf_s("Некорректный ввод, попробуйте еще раз:");
-		scanf_s("%d", &turn);
-	}
-	point[0] = turn;
-	if (turn == 1 || turn == 2)
-	{
-		scanf_s("%d", &_turn);
-		while (turn < 1 || turn > 3)
-		{
-			printf_s("Некорректный ввод, попробуйте еще раз:");
-			scanf_s("%d", &_turn);
-		}
-		point[1] = _turn;
-	}
-	return turn;
-}
-
-
-int start_menu()
-{
-	int turn;
-
-	printf_s("Перед началом работы задайте время CPU\n     Подменю:\n       1. Сгенерировать рандомно\n       2. Прочитать из файла\n");
-	printf_s("Ваш выбор: ");
-	scanf_s("%d", &turn);
-	while (turn < 1 || turn > 2)
-	{
-		printf_s("Некорректный ввод, попробуйте еще раз:");
-		scanf_s("%d", &turn);
-	}
-	return turn;
-}
-
-int fird_punct()
-{
-	int turn;
-	system("cls");
-	printf_s("1.Сортировка Хоара.\n2.Сортировка Шелла.\n3.Шейкерная сортировка.\n Выберите сортировку: ");
-	scanf_s("%d", &turn);
-	while (turn < 1 || turn > 4)
-	{
-		printf_s("Некорректный ввод, попробуйте еще раз:");
-		scanf_s("%d", &turn);
-	}
-	return turn;
-}
 
 int main()
 {
@@ -549,7 +550,7 @@ int main()
 			}
 			break;
 		case 3:
-			running = fird_punct();
+			running = vid_sort_menu();
 			switch (running)
 			{
 			case 1:
